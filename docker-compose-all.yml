@@ -37,6 +37,12 @@ services:
         target: /var/lib/mysql
     ports:
       - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: ${TZ}
     deploy:
       resources:
         limits:
@@ -102,6 +108,21 @@ services:
 
       placement:
         constraints: [node.role==worker]
+      environment:
+        NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_ADMIN_USER}
+        NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
+        NEXTCLOUD_DATA_DIR: ${NEXTCLOUD_DATA_DIR}
+        NEXTCLOUD_TABLE_PREFIX: ${NEXTCLOUD_TABLE_PREFIX}
+        NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_TRUSTED_DOMAINS}
+        NEXTCLOUD_UPDATE: ${NEXTCLOUD_UPDATE}
+        REDIS_HOST: ${REDIS_HOST}
+        REDIS_HOST_PASSWORD: ${REDIS_HOST_PASSWORD}
+        REDIS_HOST_PORT: ${REDIS_HOST_PORT}
+        TZ: ${TZ}
+
+        NEXTCLOUD_TRUSTED_PROXIES: ${NEXTCLOUD_TRUSTED_PROXIES}
+        NEXTCLOUD_OVERWRITEPROTOCOL: ${NEXTCLOUD_OVERWRITEPROTOCOL}
+        NEXTCLOUD_OVERWRITEWEBROOT: ${NEXTCLOUD_OVERWRITEWEBROOT}
     #env_file: /docker-config/nextcloud/config/nextcloud-db.env 
   
   redis:
