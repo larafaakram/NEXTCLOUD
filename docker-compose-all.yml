@@ -49,7 +49,7 @@ services:
         - "traefik.enable=false"
       placement:
         constraints: [node.role==worker]
-    env_file: /docker-config/nextcloud/config/nextcloud-db.env
+    #env_file: /docker-config/nextcloud/config/nextcloud-db.env
 
   app:
     image: nextcloud:v19.0.1
@@ -102,7 +102,7 @@ services:
 
       placement:
         constraints: [node.role==worker]
-    env_file: /docker-config/nextcloud/config/nextcloud-db.env 
+    #env_file: /docker-config/nextcloud/config/nextcloud-db.env 
   
   redis:
     image: redis:v6.0.6
