@@ -1,0 +1,126 @@
+version: '3.8'
+
+volumes:
+  nc_app:
+    driver_opts:
+      type: nfs
+      o: "addr=srv-storage,rw,nfsvers=4,nolock,soft,exec"
+      device: ":/docker-volume/${STACK}/app"
+  nc_db:
+    driver_opts:
+      type: nfs
+      o: "addr=srv-storage,rw,nfsvers=4,nolock,soft,exec"
+      device: ":/docker-volume/${STACK}/database"
+  nc_app_data:
+    driver_opts:
+      type: nfs
+      o: "addr=srv-storage,rw,nfsvers=4,nolock,soft,exec"
+      device: ":/docker-data/${STACK}/data"
+
+
+networks:
+  nc_network:
+  traefik_web:
+    external: true
+
+services:
+  db:
+    image: mariadb:v10.5.4
+    networks:
+      nc_network:
+        aliases:
+          - database
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - type: volume
+        source: nc_db
+        target: /var/lib/mysql
+    ports:
+      - "3306"
+    deploy:
+      resources:
+        limits:
+          cpus: '.5'
+          memory: 256M
+        reservations:
+          cpus: '.5'
+          memory: 256M
+      labels:
+        - "traefik.enable=false"
+      placement:
+        constraints: [node.role==worker]
+    env_file: /docker-config/nextcloud/config/nextcloud-db.env
+
+  app:
+    image: nextcloud:v19.0.1
+    networks:
+      - traefik_web
+      - nc_network
+    depends_on:
+      - "db"
+    volumes:
+      - type: volume
+        source: nc_app
+        target: /var/www/html
+      - type: volume
+        source: nc_app_data
+        target: /var/www/html/data
+      - /docker-config/nextcloud/custom_apps19:/var/www/html/custom_apps
+      #- /docker-config/nextcloud/skeleton:/var/www/html/core/myskeleton
+      - /docker-config/nextcloud/skeleton:/var/www/html/core/skeleton
+    deploy:
+      resources:
+        limits:
+          cpus: '.5'
+          memory: 256M
+        reservations:
+          cpus: '.5'
+          memory: 256M
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.${STACK}.rule=Host(`${STACK}.nextstep-it.com`)
+        - traefik.http.routers.${STACK}.entrypoints=websecure
+        - traefik.http.routers.${STACK}.tls.certresolver=myresolver
+        - traefik.docker.network=traefik_web
+        - traefik.http.services.${STACK}.loadbalancer.server.port=80
+        #- traefik.http.routers.${STACK}.https.middlewares=onlyoffice-headers
+        # HSTS
+        - traefik.http.middlewares.nc-header.headers.referrerPolicy=no-referrer
+        - traefik.http.middlewares.nc-header.headers.stsSeconds=31536000
+        - traefik.http.middlewares.nc-header.headers.forceSTSHeader=true
+        - traefik.http.middlewares.nc-header.headers.stsPreload=true
+        - traefik.http.middlewares.nc-header.headers.stsIncludeSubdomains=true
+        - traefik.http.middlewares.nc-header.headers.browserXssFilter=true
+        # Proxy
+        - traefik.http.middlewares.${STACK}.headers.customrequestheaders.X-Forwarded-Proto=https
+        # CalDav and CardDav
+        - traefik.http.middlewares.nextcloud-caldav.redirectregex.permanent=true
+        - traefik.http.middlewares.nextcloud-caldav.redirectregex.regex=^https://(.*)/.well-known/(card|cal)dav
+        - traefik.http.middlewares.nextcloud-caldav.redirectregex.replacement=https://$${1}/remote.php/dav/
+        # Attach middleware
+        - traefik.http.routers.${STACK}.middlewares=nextcloud-caldav@docker,nc-header
+
+      placement:
+        constraints: [node.role==worker]
+    env_file: /docker-config/nextcloud/config/nextcloud-db.env 
+  
+  redis:
+    image: redis:v6.0.6
+    command: redis-server --requirepass P@assw0rd
+    networks:
+      nc_network:
+        aliases:
+          - ncredis
+    deploy:
+      resources:
+        limits:
+          cpus: '.5'
+          memory: 64M
+        reservations:
+          cpus: '.5'
+          memory: 64M
+      labels:
+          - "traefik.enable=false"
+      placement:
+        constraints: [node.role==worker]
+
