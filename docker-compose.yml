@@ -1,0 +1,45 @@
+version: '3.8'
+
+networks:
+  nc_network:
+
+volumes:
+  nc_db:
+  nc_app:
+  nc_app_data:
+  
+  
+
+services:
+  db:
+    image: mariadb:v10.5.4
+    networks:
+      nc_network:
+        aliases:
+          - database
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+       - nc_db:/var/lib/mysql
+    ports:
+      - "3306"
+
+  app:
+    image: nextcloud:v19.0.1
+    networks:
+      - nc_network
+    depends_on:
+      - "db"
+    volumes:
+      - nc_app:/var/www/html
+      - nc_app_data:/var/www/html/data
+    
+    env_file: /docker-config/nextcloud-db.env 
+  
+  redis:
+    image: redis:v6.0.6
+    command: redis-server --requirepass P@assw0rd
+    networks:
+      nc_network:
+        aliases:
+          - ncredis
+    env_file: /docker-config/nextcloud-db.env  
