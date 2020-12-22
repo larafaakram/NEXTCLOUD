@@ -58,7 +58,7 @@ services:
     #env_file: /docker-config/nextcloud/config/nextcloud-db.env
 
   app:
-    image: nextdrive:v2.9
+    image: nextdrive:v3.0
     #image: nextcloud:v19.0.1
     networks:
       - traefik_web
