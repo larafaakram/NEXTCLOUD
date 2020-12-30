@@ -138,7 +138,7 @@ services:
     #env_file: /docker-config/nextcloud/config/nextcloud-db.env 
   
   redis:
-    image: redis:v6.0.6
+    image: redis:v6.0.8
     command: redis-server --requirepass P@assw0rd
     networks:
       nc_network:
