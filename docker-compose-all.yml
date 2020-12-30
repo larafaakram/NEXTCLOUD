@@ -76,6 +76,8 @@ services:
       - /docker-config/nextcloud/custom_apps19:/var/www/html/custom_apps
       #- /docker-config/nextcloud/skeleton:/var/www/html/core/myskeleton
       - /docker-config/nextcloud/skeleton:/var/www/html/core/skeleton
+      - /docker-config/nextcloud/dockerfile/background.png /var/www/html/core/img/background.png
+
     deploy:
       resources:
         limits:
