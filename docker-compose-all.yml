@@ -59,7 +59,7 @@ services:
     #env_file: /docker-config/nextcloud/config/nextcloud-db.env
 
   app:
-    image: nextdrive:v19.0.7
+    image: nextdrive:v19.0.8
     #image: nextcloud:v19.0.1
     networks:
       - traefik_web
@@ -75,7 +75,7 @@ services:
         target: /var/www/html/data
       - /docker-config/nextcloud/custom_apps19:/var/www/html/custom_apps
       #- /docker-config/nextcloud/skeleton:/var/www/html/core/myskeleton
-      - /docker-config/nextcloud/skeleton:/var/www/html/core/skeleton
+      #- /docker-config/nextcloud/skeleton:/var/www/html/core/skeleton
            
 
     deploy:
