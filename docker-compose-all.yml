@@ -75,7 +75,7 @@ services:
         target: /var/www/html/data
       - /docker-config/nextcloud/custom_apps19:/var/www/html/custom_apps
       #- /docker-config/nextcloud/skeleton:/var/www/html/core/myskeleton
-      - /docker-config/nextcloud/config/skeleton:/var/www/html/core/skeleton
+      #- /docker-config/nextcloud/config/skeleton:/var/www/html/core/skeleton
            
 
     deploy:
