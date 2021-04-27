@@ -21,8 +21,7 @@ volumes:
 networks:
   nc_network:
   traefik_web:
-    external: true
-    name: traefik_web
+    external: true    
 
 services:
   db:
