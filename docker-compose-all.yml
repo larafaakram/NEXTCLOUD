@@ -95,12 +95,12 @@ services:
         - traefik.http.services.${STACK}.loadbalancer.server.port=80
         #- traefik.http.routers.${STACK}.https.middlewares=onlyoffice-headers
         # HSTS
-        #- traefik.http.middlewares.nc-header.headers.referrerPolicy=no-referrer
-        #- traefik.http.middlewares.nc-header.headers.stsSeconds=31536000
-        #- traefik.http.middlewares.nc-header.headers.forceSTSHeader=true
-        #- traefik.http.middlewares.nc-header.headers.stsPreload=true
-        #- traefik.http.middlewares.nc-header.headers.stsIncludeSubdomains=true
-        #- traefik.http.middlewares.nc-header.headers.browserXssFilter=true
+        - traefik.http.middlewares.nc-header.headers.referrerPolicy=no-referrer
+        - traefik.http.middlewares.nc-header.headers.stsSeconds=31536000
+        - traefik.http.middlewares.nc-header.headers.forceSTSHeader=true
+        - traefik.http.middlewares.nc-header.headers.stsPreload=true
+        - traefik.http.middlewares.nc-header.headers.stsIncludeSubdomains=true
+        - traefik.http.middlewares.nc-header.headers.browserXssFilter=true
         # Proxy
         - traefik.http.middlewares.${STACK}.headers.customrequestheaders.X-Forwarded-Proto=https
         # CalDav and CardDav
