@@ -89,7 +89,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.routers.${STACK}.rule=Host(`${STACK}.nextstep-it.com`)
-        - traefik.http.routers.${STACK}.entrypoints=websecure
+        - traefik.http.routers.${STACK}.entrypoints=web,websecure
         - traefik.http.routers.${STACK}.tls.certresolver=myresolver
         - traefik.docker.network=traefik_web
         - traefik.http.services.${STACK}.loadbalancer.server.port=80
