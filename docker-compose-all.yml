@@ -66,6 +66,7 @@ services:
       - nc_network
     depends_on:
       - "db"
+      - "nginx2collabora"
     volumes:
       - type: volume
         source: nc_app
